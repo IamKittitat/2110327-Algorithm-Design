@@ -9,13 +9,12 @@ int countOne(vector<int> virus,int start,int stop){
     return ans;
 }
 
-pair<bool,int> checkVirus(vector<int> virus,int start,int stop){
+pair<bool,int> checkVirus(vector<int> &virus,int start,int stop){
     int mid = (start+stop)/2;
     if(stop-start == 2) return {true,countOne(virus,start,stop)};
     pair<bool,int> leftCheck = checkVirus(virus,start,mid);
     if(!leftCheck.first) return {false,leftCheck.second};
     pair<bool,int> rightCheck = checkVirus(virus,mid,stop);
-    if(!rightCheck.first) return {false,rightCheck.second};
 
     int leftOne = leftCheck.second;
     int rightOne = rightCheck.second;
