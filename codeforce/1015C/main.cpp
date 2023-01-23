@@ -4,7 +4,7 @@ using namespace std;
 
 int main()
 {
-    /*int n,m;
+    int n,m;
     cin >> n >> m;
     vector<double> v(n);
     double total = 0;
@@ -24,6 +24,5 @@ int main()
         }
     }
     if(total <= m) cout << ans;
-    else cout << "-1";*/
-    cout << LLONG_MAX;
+    else cout << "-1";
 }
