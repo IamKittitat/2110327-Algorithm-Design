@@ -8,12 +8,13 @@ deque<int> deq;
 
 int mss(int n,vector<int> &S){
     int best = INT32_MIN;
-    for(int i =0;i<S.size();i++){
+    for(int i = 0;i<S.size();i++){
         if(!deq.empty() && i - deq.front() > n) deq.pop_front();
-        if(i != 0 && S[i] - S[deq.front()] > best){
+
+        if(i !=  0 && S[i] - S[deq.front()] >= best){
             best = S[i] - S[deq.front()];
-        }
-        while(!deq.empty() && S[deq.front()] > S[i]) deq.pop_back();
+        } 
+        while(!deq.empty() && S[deq.back()] > S[i]) deq.pop_back();
         deq.push_back(i);
     }
     return best;
