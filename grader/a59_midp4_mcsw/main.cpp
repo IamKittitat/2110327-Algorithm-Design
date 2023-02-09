@@ -7,7 +7,7 @@ using namespace std;
 deque<int> deq;
 
 int mss(vector<int> &v,int w,vector<int> &S){
-    int best = v[0];
+    int best = INT32_MIN;
     for(int i = 0;i<S.size();i++){
         if(!deq.empty() && i - deq.front() >= w) deq.pop_front();
 
@@ -24,10 +24,10 @@ int main(){
     ios_base::sync_with_stdio(false); cin.tie(0);
     int n,w;
     cin >> n >> w;
-    vector<int> v(n),S(n);
+    vector<int> v(n),S(n+1);
     for(int i =0;i<n;i++) cin >> v[i];
-    S[0] = v[0];
-    for(int i = 1; i < n ; i++) S[i] = S[i-1] + v[i];
+    S[0] = 0;
+    for(int i = 0; i < n ; i++) S[i+1] = S[i] + v[i];
     cout << mss(v,w,S);
 }
 
