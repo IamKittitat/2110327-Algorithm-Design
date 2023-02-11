@@ -1,12 +1,13 @@
 #include<iostream>
 #include<vector>
+#include<algorithm>
 
 using namespace std;
 
 int main(){
     int n;
     cin >> n;
-    vector<int> v(8000000);
+    vector<int> v(800000);
     v[1] = 1;
     v[2] = 2;
     v[3] = 2;
@@ -17,31 +18,13 @@ int main(){
         i++;
         if(i > v.size() || k+v[i] > v.size()) break;
     }
-    // for(int i = 0;i<1000;i++) cout << v[i] << endl;
+    vector<int> S(v.size());
+    S[0] = 0;
+    for(int i =1; i<S.size();i++) S[i] = v[i] + S[i-1];
     for(int i =0;i<n;i++){
         int q;
         cin >> q;  
-        int sum = 0,ans;
-        for(int i =0;i<v.size();i++){
-            sum+=v[i];
-            if(sum>=q){
-                ans = i;
-                break;
-            }
-        }
-        cout << ans << endl;
+        auto it = lower_bound(S.begin(),S.end(),q);
+        cout << it-S.begin() << endl;
     }
 }
-
-/*
-4
-100
-9999
-123456
-1000000000
-
-3
-13
-19
-6
-*/
