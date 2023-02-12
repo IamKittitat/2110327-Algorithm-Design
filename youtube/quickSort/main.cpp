@@ -5,20 +5,25 @@ using namespace std;
 
 int partition(vector<int> &v,int start,int stop){
     int pivot = v[start];
-    int left = start,right = stop;
-    while(left<right){
-        do{ left++; } while(v[left]<pivot);
-        do { right--;} while(v[right] > pivot);
-        if(left < right) swap(v[left],v[right]);
-        else return right;
+    int count = 0;
+    for(int i =start+1; i<=stop;i++){
+        if(v[i] <= pivot) count++;
     }
-    return right;
+    int pivotIdx = start + count;
+    swap(v[start],v[pivotIdx]);
+    int left = start,right = stop;
+    while(left < pivotIdx && right > pivotIdx){
+        while(v[left] <= pivot) left++;
+        while(v[right] > pivot) right--;
+        if(left <pivotIdx && right > pivotIdx) swap(v[left++],v[right--]);
+    }
+    return pivotIdx;
 }
 
 void quickSort(vector<int> &v,int start,int stop){
     if(start < stop){
         int p = partition(v,start,stop);
-        quickSort(v,start,p);
+        quickSort(v,start,p-1);
         quickSort(v,p+1,stop);
     }
 }
