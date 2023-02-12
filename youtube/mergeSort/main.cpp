@@ -1,24 +1,25 @@
-#include <bits/stdc++.h>
+#include<iostream>
+#include<vector>
 
 using namespace std;
 
-void merge(vector<int> &v,int start,int m,int stop,vector<int> &tmp){
-    int bi = start;
+void merge(vector<int> &v,int l,int m,int r,vector<int> &tmp){
+    int bi = l;
     int ci = m+1;
-    for(int i = start;i <= stop;i++){
-        if(ci > stop) {tmp[i] = v[bi++]; continue;}
-        if(bi > m) {tmp[i] = v[ci++]; continue;}
+    for(int i =l;i<=r;i++){
+        if(ci>r) {tmp[i] = v[bi++];continue;}
+        if(bi>m) {tmp[i] = v[ci++];continue;}
         tmp[i] = (v[bi] < v[ci]) ? v[bi++] : v[ci++];
     }
-    for(int i = start;i <= stop;i++) v[i] = tmp[i];
+    for(int i =l;i<=r;i++) v[i] = tmp[i];
 }
 
-void merge_sort(vector<int> &v ,int start,int stop,vector<int> &tmp){
-    if(start < stop){
-        int m = (start+stop) >> 1;
-        merge_sort(v,start,m,tmp);
-        merge_sort(v,m+1,stop,tmp);
-        merge(v,start,m,stop,tmp);
+void merge_sort(vector<int> &v,int l,int r,vector<int> &tmp){
+    if(l < r){
+        int m = (l+r)/2;
+        merge_sort(v,l,m,tmp);
+        merge_sort(v,m+1,r,tmp);
+        merge(v,l,m,r,tmp);
     }
 }
 
