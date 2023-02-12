@@ -1,28 +1,24 @@
-#include <bits/stdc++.h>
-#include <cmath>
+#include<iostream>
+#include<vector>
+#include<cmath>
 
 using namespace std;
 
-int countOne(vector<int> virus,int start,int stop){
-    int ans =0;
-    for(int i = start;i<stop;i++) if(virus[i] == 1) ans++;
-    return ans;
-}
+pair<bool,int> solve(vector<int> &v,int l,int r){
+    if(r-l == 1){
+        int total = 0;
+        for(int i = l ;i<=r;i++) if(v[i] == 1) total++;
+        return {true,total};
+    }
+    int m = (l+r)/2;
+    pair<bool,int> left = solve(v,l,m);
+    if(!left.first) return {false,-1};
+    pair<bool,int> right = solve(v,m+1,r);
+    if(!right.first) return {false,-1};
 
-pair<bool,int> checkVirus(vector<int> &virus,int start,int stop){
-    int mid = (start+stop)/2;
-    if(stop-start == 2) return {true,countOne(virus,start,stop)};
-    pair<bool,int> leftCheck = checkVirus(virus,start,mid);
-    if(!leftCheck.first) return {false,leftCheck.second};
-    pair<bool,int> rightCheck = checkVirus(virus,mid,stop);
+    if(abs(right.second-left.second) > 1) return {false,-1};
+    return {true,right.second+left.second};
 
-    int leftOne = leftCheck.second;
-    int rightOne = rightCheck.second;
-
-    int diffOne = abs(leftOne - rightOne);
-    // cout << "CHECK " << start << " " << stop << " " << diffOne << endl;
-    if(diffOne <= 1 && leftCheck.first  && rightCheck.first) return {true,leftOne+rightOne};
-    return {false,leftOne+rightOne};
 }
 
 int main()
@@ -30,15 +26,12 @@ int main()
     ios_base::sync_with_stdio(false); cin.tie(0);
     int n,k,tmp;
     cin >> n >> k;
-    int virusSize = pow(2,k);
-    for(int i = 0; i < n; i++){
-        vector<int> virus(virusSize);
-        for(int j = 0; j < virusSize; j++){
-            cin >> tmp;
-            virus[j] = tmp;
-        }
-        if(checkVirus(virus,0,virusSize).first) cout << "yes\n";
+    int len = pow(2,k);
+    vector<int> v(len);
+    for(int i =0;i<n;i++){
+        for(int j =0;j<len;j++) cin >> v[j];
+        pair<bool,int> ans = solve(v,0,len-1);
+        if(ans.first) cout << "yes\n";
         else cout << "no\n";
     }
-
 }
