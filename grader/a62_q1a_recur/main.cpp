@@ -1,18 +1,19 @@
-#include <bits/stdc++.h>
+#include<iostream>
+#include<vector>
 
 using namespace std;
 
-void recur(vector<vector<int>> &v,int a, int b,int x,int y,int s){
-    // cout << x << " " << y << " " << s << endl;
+void solve(vector<vector<int>> &v,int a,int b,int sx,int sy,int len){
     if(a == 0){
-        v[y][x] = b;
+        v[sy][sx] = b;
         return;
     }
-    recur(v,a-1,b,x,y,s/2);
-    recur(v,a-1,b-1,x+s/2,y,s/2);
-    recur(v,a-1,b+1,x,y+s/2,s/2);
-    recur(v,a-1,b,x+s/2,y+s/2,s/2);
+    solve(v,a-1,b,sx,sy,len/2);
+    solve(v,a-1,b-1,sx+len/2,sy,len/2);
+    solve(v,a-1,b+1,sx,sy+len/2,len/2);
+    solve(v,a-1,b,sx+len/2,sy+len/2,len/2);
 }
+
 
 int main()
 {
@@ -20,9 +21,9 @@ int main()
      int a,b;
      cin >> a >> b;
      vector<vector<int>> v(1<<a,vector<int>(1<<a));
-     recur(v,a,b,0,0,1<<a);
-     for(int i = 0;i< v.size();i++){
-        for(int j = 0;j< v[i].size();j++) cout << v[i][j] << " " ;
+     solve(v,a,b,0,0,1<<a);
+     for(auto &x : v){
+        for(auto &y : x) cout << y << " ";
         cout << "\n";
      }
 }
