@@ -12,9 +12,8 @@ bool solve(string &s1,string &s2,int l1,int r1,int l2,int r2){
     int m1 = (l1+r1)/2;
     int m2 = (l2+r2)/2;
     bool firstCon = solve(s1,s2,l1,m1,l2,m2) && solve(s1,s2,m1+1,r1,m2+1,r2);
-   
-    bool secondCon = solve(s1,s2,l1,m1,m2+1,r2) && solve(s1,s2,m1+1,r1,l2,m2);
     if(firstCon) return true;
+    bool secondCon = solve(s1,s2,l1,m1,m2+1,r2) && solve(s1,s2,m1+1,r1,l2,m2);
     if(secondCon) return true;
 
     return false;
