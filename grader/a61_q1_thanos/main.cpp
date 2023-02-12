@@ -4,30 +4,32 @@
 
 using namespace std;
 
-long long solve(vector<int> &v,int start,int stop,long long a,long long b){
-    auto it1 = lower_bound(v.begin(),v.end(),start);
-    auto it2 = upper_bound(it1,v.end(),stop);
-    long long amount  = it2-it1;
+long long solve(vector<int> &v,int a,int b,int l,int r){
+    auto it1 = lower_bound(v.begin(),v.end(),l);
+    auto it2 = upper_bound(v.begin(),v.end(),r);
+    int amount = it2-it1;
+    int len = r-l+1;
+    if(len == 1){
+        if(amount > 0) return b*amount;
+        else return a;
+    }
+    if(amount == 0) return a;
 
-    long long allPower;
-    if(amount > 0) allPower = b*amount*(stop-start+1);
-    else allPower = a;
+    int m = (l+r)/2;
+    long long halfPower = solve(v,a,b,l,m) + solve(v,a,b,m+1,r);
+    long long fullPower = 0;
+    if(amount > 0) fullPower = (long long)b*amount*len;
+    else fullPower = a;
 
-    if(start == stop || amount == 0) return allPower;
-     
-    int m = (start+stop)/2;
-    long long halfPower = solve(v,start,m,a,b) + solve(v,m+1,stop,a,b);
-    //cout << start << " " << stop << " " << allPower << " " << halfPower << endl;
-    return min(allPower,halfPower);
+    return min(halfPower,fullPower);
 }
 
 int main(){
-    ios_base::sync_with_stdio(false); cin.tie(0);
-    int p,k;
-    long long a,b;
+    int p,k,a,b;
     cin >> p >> k >> a >> b;
+    int len = 1<<p;
     vector<int> v(k);
-    for(int i = 0; i<k;i++) cin >> v[i];
+    for(int i = 0;i<k;i++) cin >> v[i];
     sort(v.begin(),v.end());
-    cout << solve(v,1,1<<p,a,b);
+    cout << solve(v,a,b,1,len);
 }
