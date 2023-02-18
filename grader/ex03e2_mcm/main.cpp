@@ -4,6 +4,26 @@
 using namespace std;
 
 int dp[105][105];
+int choice[105][105];
+
+void printChoice(int l,int r){
+    // cout << l << " " << r << endl;
+    if(l == r){
+        cout << "B" << l;
+        return;
+    } 
+    if(r-l == 1){
+        cout << "B" << l << "B" << r;
+        return;
+    }
+
+    cout << "(";
+    printChoice(l,choice[l][r]);
+    cout << ")";
+    cout << "(";
+    printChoice(choice[l][r]+1,r);
+    cout << ")";
+}
 
 int bottomUp(int n,vector<int> &v){
     for(int i = 1; i<= n;i++) dp[i][i] = 0;
@@ -11,14 +31,26 @@ int bottomUp(int n,vector<int> &v){
     for(int i = n-1;i>=1;i--){
         for(int j = 1;j<=i;j++){
             int minCost = INT32_MAX;
+            int bestChoice = -1;
             int right = j + (n-i);
             for(int x = j;x < right;x++){
                 int nowCost = dp[j][x] + dp[x+1][right] + v[j-1]*v[x]*v[right];
-                minCost = min(minCost,nowCost);
+                if(nowCost < minCost){
+                    minCost = nowCost;
+                    bestChoice = x;
+                }
             }
             dp[j][right] = minCost;
+            choice[j][right] = bestChoice;
         }
     }
+    printChoice(1,n);
+    cout << endl;
+    // for(int i =0;i<=n;i++){
+    //     for(int j = 0;j<=n;j++) cout << choice[i][j] << " ";
+    //     cout << endl;
+    // }
+    // cout << "C" << choice[1][n] << endl;
     return dp[1][n];
 }
 
