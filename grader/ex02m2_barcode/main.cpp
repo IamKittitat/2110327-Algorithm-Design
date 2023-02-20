@@ -3,31 +3,31 @@
 
 using namespace std;
 
-int dp[35][35];
-
-int solve(int n,int m,int k){
-    if(n<1) return 0;
-    if(k == 0){
-        if(n <= m) return 1;
-        return 0;
-    }
-    if(dp[n][k] > -1) return dp[n][k];
-    int result = 0;
-    for(int i =1;i<=m;i++){
-        result += solve(n-i,m,k-1);
-    }
-    dp[n][k] = result;
-    return result;
-
-}
+int dp[35][35]; // length i with j swap times
 
 int main(){
     int n,m,k;
     cin >> n >> m >> k;
-    for(int i =0;i<=n;i++) for(int j=0;j<=k;j++) dp[i][j] = -1;
-    cout << solve(n,m,k);
-}
+    // Initial Case for col 0 
+    for(int i =0;i<=n;i++){
+        if(i<=m) dp[i][0] = 1;
+        else dp[i][0] = 0;
+    }
+    // Len 0 can create 0 
+    dp[0][0] = 0;
 
+    for(int i =1;i<=n;i++){
+        for(int j=1;j<=k;j++){
+            dp[i][j] = 0;
+            // For "m" (Can have same color within this range)
+            for(int l =1;l<=m;l++){
+                if(l>i) break;
+                dp[i][j] += dp[i-l][j-1];
+            }
+        } 
+    }
+    cout << dp[n][k];
+}
 /*
 4 3 1
 
