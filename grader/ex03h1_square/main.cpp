@@ -9,6 +9,7 @@ int main(){
     vector<vector<int>> v(r,vector<int>(c)),dp(r,vector<int>(c));
     
     for(int i =0;i<r;i++){
+        // Handle input by change it to int
         string s;
         cin >> s;
         for(int j =0;j<c;j++){
@@ -16,11 +17,7 @@ int main(){
         }
     }
 
-    // for(auto &x : v){
-    //     for(auto &y : x) cout << y << " ";
-    //     cout << endl;
-    // }
-
+    // Initial Case
     for(int i =0;i<r;i++) dp[i][0] = (v[i][0] == 1) ? 1 : 0;
     for(int i =0;i<c;i++) dp[0][i] = (v[0][i] == 1) ? 1 : 0;
 
