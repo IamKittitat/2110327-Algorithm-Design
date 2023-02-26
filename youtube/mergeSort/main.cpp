@@ -7,21 +7,22 @@ void merge(vector<int> &v,int l,int m,int r,vector<int> &tmp){
     int bi = l;
     int ci = m+1;
     for(int i =l;i<=r;i++){
-        if(ci>r) {tmp[i] = v[bi++];continue;}
-        if(bi>m) {tmp[i] = v[ci++];continue;}
-        tmp[i] = (v[bi] < v[ci]) ? v[bi++] : v[ci++];
+        if(bi > m){tmp[i] = v[ci++];continue;}
+        if(ci > r){tmp[i] = v[bi++];continue;}
+        tmp[i] = v[bi] < v[ci] ? v[bi++] : v[ci++];
     }
     for(int i =l;i<=r;i++) v[i] = tmp[i];
 }
 
 void merge_sort(vector<int> &v,int l,int r,vector<int> &tmp){
-    if(l < r){
+    if(l<r){
         int m = (l+r)/2;
         merge_sort(v,l,m,tmp);
         merge_sort(v,m+1,r,tmp);
         merge(v,l,m,r,tmp);
     }
 }
+
 
 
 int main()
