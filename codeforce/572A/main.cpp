@@ -1,4 +1,6 @@
-#include <bits/stdc++.h>
+#include <iostream>
+#include<vector>
+#include<algorithm>
 
 using namespace std;
 
@@ -11,13 +13,7 @@ int main()
     for(int i = 0; i < na;i++) cin >> va[i];
     for(int i = 0; i< nb;i++) cin >> vb[i];
     int minb = vb[vb.size()-m];
-    bool can = true;
-    for(int i = 0;i<k;i++){
-        if(va[i] >= minb){
-            can = false;
-            break;
-        }
-    }
-    if(can) cout << "YES";
+    int maxa = va[k-1];
+    if(maxa < minb) cout << "YES";
     else cout << "NO";
 }
