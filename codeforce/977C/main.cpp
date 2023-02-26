@@ -1,15 +1,15 @@
-#include <bits/stdc++.h>
+#include<iostream>
+#include<vector>
+#include<algorithm>
 
 using namespace std;
 
-int main()
-{
+int main(){
     int n,k;
     cin >> n >> k;
     vector<int> v(n);
-    for(int i = 0;i<n;i++) cin >> v[i];
+    for(int i =0;i<n;i++) cin >> v[i];
     sort(v.begin(),v.end());
-
     if(k < 1) {
         if(v[0] > 1) cout << "1";
         else cout << "-1";
@@ -19,5 +19,4 @@ int main()
         if(v[k-1] != v[k]) cout << v[k-1];
         else cout << "-1";
     }
-
 }
