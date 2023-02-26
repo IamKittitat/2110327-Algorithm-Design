@@ -10,9 +10,10 @@ int main(){
     vector<int> v(3),dp(n+1);
     for(int i =0;i<3;i++) cin >> v[i];
     sort(v.begin(),v.end());
-    for(int i =0;i<v[0];i++){
-        if(i%v[0] != 0) dp[i] = INT32_MIN;
-        else dp[i] = 0;
+    
+    // Not possible to be done
+    for(int i =1;i<v[0];i++){
+        dp[i] = INT32_MIN;
     }
     for(int i = v[0];i<=n;i++){
         dp[i] = INT32_MIN;
