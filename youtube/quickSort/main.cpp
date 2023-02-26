@@ -3,30 +3,37 @@
 
 using namespace std;
 
-int partition(vector<int> &v,int start,int stop){
-    int pivot = v[start];
+// Make left <= pivot and right > pivot
+// 1 2 3 4 5 "5" 6 8 9
+int partition(vector<int> &v,int l,int r){
+    int pivot = v[l];
     int count = 0;
-    for(int i =start+1; i<=stop;i++){
-        if(v[i] <= pivot) count++;
-    }
-    int pivotIdx = start + count;
-    swap(v[start],v[pivotIdx]);
-    int left = start,right = stop;
+    // Count how many <= pivot (To get pivot real position)
+    for(int i =l+1;i<=r;i++) if(v[i] <= pivot) count++;
+    int pivotIdx = l + count;
+    swap(v[l],v[pivotIdx]);
+    int left = l,right = r;
+    // Loop both side
     while(left < pivotIdx && right > pivotIdx){
+        // v[left] <= pivot means v[left] is at the correct side
         while(v[left] <= pivot) left++;
+        // v[right] > pivot means v[right] is at the correct side
         while(v[right] > pivot) right--;
-        if(left <pivotIdx && right > pivotIdx) swap(v[left++],v[right--]);
+        // left++ right-- so we dont need to do this again
+        if(left < pivotIdx && right > pivotIdx) swap(v[left++],v[right--]);
     }
     return pivotIdx;
 }
 
-void quickSort(vector<int> &v,int start,int stop){
-    if(start < stop){
-        int p = partition(v,start,stop);
-        quickSort(v,start,p-1);
-        quickSort(v,p+1,stop);
+void quickSort(vector<int> &v,int l,int r){
+    if(l < r){
+        int p = partition(v,l,r);
+        // No need to sort the pivot position
+        quickSort(v,l,p-1);
+        quickSort(v,p+1,r);
     }
 }
+
 
 int main()
 {
