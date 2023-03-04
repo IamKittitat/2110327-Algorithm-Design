@@ -3,38 +3,37 @@
 
 using namespace std;
 
-int main(){
-    ios_base::sync_with_stdio(false);cin.tie(NULL);
-    int n;
-    cin >> n;
-    vector<int> v(n),lmss(n),rmss(n);
-    for(int i =0;i<n;i++) cin >> v[i];
+// int main(){
+//     ios_base::sync_with_stdio(false);cin.tie(NULL);
+//     int n;
+//     cin >> n;
+//     vector<int> v(n),lmss(n),rmss(n);
+//     for(int i =0;i<n;i++) cin >> v[i];
 
-    lmss[0] = v[0];
-    int maxHere = lmss[0];
-    for(int i = 1;i<n;i++){
-        maxHere += v[i];
-        lmss[i] = max(maxHere,lmss[i-1]);
-        maxHere = max(maxHere,0);
-    }
+//     lmss[0] = v[0];
+//     int maxHere = max(0,lmss[0]);
+//     for(int i = 1;i<n;i++){
+//         maxHere += v[i];
+//         lmss[i] = max(maxHere,lmss[i-1]);
+//         maxHere = max(maxHere,0);
+//     }
 
-    rmss[n-1] = v[n-1];
-    maxHere = rmss[n-1];
-    for(int i = n-2;i>=0;i--){
-        maxHere += v[i];
-        rmss[i] = max(maxHere,rmss[i+1]);
-        maxHere = max(maxHere,0);
-    }
-    // for(auto &x : rmss) cout << x << " ";
-    int ans = lmss[n-1];
-    // cout << "!!" << ans << endl;
-    for(int i =0;i<n-1;i++){
-        ans = max(ans,lmss[i]+rmss[i+1]);
-    }
-    cout << ans;
-}
+//     rmss[n-1] = v[n-1];
+//     maxHere = max(0,rmss[n-1]);
+//     for(int i = n-2;i>=0;i--){
+//         maxHere += v[i];
+//         rmss[i] = max(maxHere,rmss[i+1]);
+//         maxHere = max(maxHere,0);
+//     }
 
-// (My) First Approach (using kadane with second max)
+//     int ans = lmss[n-1];
+//     for(int i =0;i<n-1;i++){
+//         ans = max(ans,lmss[i]+rmss[i+1]);
+//     }
+//     cout << ans;
+// }
+
+// (My) First Approach (using kadane with second max) -P-P-P-PPP
 // int main(){
 //     ios_base::sync_with_stdio(false);cin.tie(NULL);
 //     int n;
