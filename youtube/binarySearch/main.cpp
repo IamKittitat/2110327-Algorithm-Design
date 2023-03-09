@@ -1,26 +1,14 @@
-#include <bits/stdc++.h>
+#include<iostream>
+#include<vector>
 
 using namespace std;
 
-
 int bsearch(vector<int> &v, int k,int start, int stop){
     if(start == stop) return v[start] == k ? start : -1;
-    int m = (start+stop) >> 1;
+    int m = (start + stop)/2;
     if(v[m] >= k) return bsearch(v,k,start,m);
     else return bsearch(v,k,m+1,stop);
 }
-
-
-/*
-int bsearch(vector<int> &v, int k,int start, int stop){
-    // cout << start << " " << stop << endl;
-    if(start == stop) return v[start] == k ? start : -1;
-    int m = (start+stop) >> 1;
-    if(v[m] == k) return m;
-    if(v[m] < k) return bsearch(v,k,m+1,stop);
-    if(v[m] > k) return bsearch(v,k,start,m-1);
-}
-*/
 
 
 int main()
