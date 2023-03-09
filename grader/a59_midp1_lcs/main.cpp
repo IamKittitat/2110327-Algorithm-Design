@@ -4,35 +4,34 @@
 
 using namespace std;
 
-void solve(string &s1,string &s2,vector<vector<int>> &v){
-    int len1 = s1.length()-1,len2 = s2.length()-1;
-    string ans = "";
-    int r = len1,c = len2;
-    while(r > 0 && c > 0){
-        if(s1[r] == s2[c]){
-            ans = s1[r] + ans;
-            r--; c--;
-        }
-        else{
-            if(v[r-1][c] > v[r][c-1]){
-                r--;
-            } else{
-                c--;
-            }
-        }
-    }
-    cout << ans;
-}
-
 int main(){
     int n,m;
     cin >> n >> m;
     string s1,s2;
     cin >> s1 >> s2;
+    int len1 = s1.length(), len2 = s2.length();
     s1 = "x"+s1;
     s2 = "x"+s2;
-    vector<vector<int>> v(n+1,vector<int>(m+1,0)); // n+1 * m+1  with all row is 0
-    for(int i =0;i<=n;i++) for(int j=0;j<=m;j++) cin >> v[i][j];
+    vector<vector<int>> dp(len1+1,vector<int>(len2+1,0));
+    for(int i =1;i<=len1;i++){
+        for(int j =1;j<=len2;j++){
+            if(s1[i] == s2[j]) dp[i][j] = dp[i-1][j-1]+1;
+            else{
+                dp[i][j] = max(dp[i-1][j],dp[i][j-1]);
+            }
+        }
+    }
 
-    solve(s1,s2,v);
+    int r = len1,c = len2;
+    string ans = "";
+    while(r > 0 && c > 0){
+        if(s1[r] == s2[c]){
+            ans = s1[r] + ans;
+            r--; c--;
+        } else{
+            if(dp[r-1][c] > dp[r][c-1]) r--;
+            else c--;
+        }
+    }
+    cout << ans;
 }
