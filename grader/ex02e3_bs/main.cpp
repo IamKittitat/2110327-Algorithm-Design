@@ -1,25 +1,28 @@
-#include <bits/stdc++.h>
+#include<iostream>
+#include<vector>
+
 using namespace std;
 
-int solve(vector<int> &v, int start, int stop, int q,int idxAns,int ans){
-    int m = (start+stop)/2;
-    if(start == stop){
-        if(v[m] >= ans && v[m] <= q) return start;
-        return idxAns;
+int solve(vector<int> &v, int q,int l,int r,int ans){
+    if(l == r){
+        if(v[l] <= q) return max(l,ans);
+        return ans;
     }
-    if(v[m] > q) return solve(v,start,m,q,idxAns,ans); // move left
-    else return solve(v,m+1,stop,q,m,v[m]); // move right
+    
+    int m = (l+r)/2;
+    if(v[m] <= q) return solve(v,q,m+1,r,m);
+    else return solve(v,q,l,m,ans);
 }
 
-int main()
-{
+int main(){
     ios_base::sync_with_stdio(false); cin.tie(0);
-    int n,m,q;
+    int n,m;
     cin >> n >> m;
     vector<int> v(n);
-    for(int i = 0;i<n;i++) cin >> v[i];
-    for(int i = 0;i<m;i++){
+    for(int i =0;i<n;i++) cin >> v[i];
+    for(int i =0;i<m;i++){
+        int q;
         cin >> q;
-        cout << solve(v,0,v.size()-1,q,-1,-1) << "\n";
+        cout << solve(v,q,0,n-1,-1) << "\n";
     }
 }
