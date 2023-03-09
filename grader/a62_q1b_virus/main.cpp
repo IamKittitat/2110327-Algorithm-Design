@@ -1,41 +1,33 @@
-#include <bits/stdc++.h>
-#include <cmath>
+#include<iostream>
+#include<vector>
+#include<cmath>
 
 using namespace std;
 
-bool checkVirus(vector<int> virus,int start,int stop){
-    int mid = (start+stop)/2;
-    if(stop-start == 2){
-        if((virus[start] == 0 && virus[start+1] ==1)) return true;
-        else return false;
+bool solve(vector<int> &v,int l,int r){
+    if(r-l == 1){
+        if(v[l] == 0 && v[r] == 1) return true;
+        return false;
     }
-    vector<int> newVirus = virus;
-    auto l = start;
-    auto r = mid-1;
-    while(l < r){
-        swap(newVirus[l++],newVirus[r--]);
-    }
-    bool aValid = checkVirus(virus,start,mid) || checkVirus(newVirus,start,mid);
-    bool bValid = checkVirus(virus,mid,stop);
-    if(aValid && bValid) return true;
-    else return false;
+
+    int m = (l+r)/2;
+    vector<int> rev_v = v;
+    int start = l, stop = m;
+    while(start < stop) swap(rev_v[start++],rev_v[stop--]);
+    bool first = solve(v,l,m) || solve(rev_v,l,m);
+    bool second = solve(v,m+1,r);
+    return first && second;
 }
 
-
-int main()
-{
+int main(){
     ios_base::sync_with_stdio(false); cin.tie(0);
-    int n,k,tmp;
+    int n,k;
     cin >> n >> k;
-    int virusSize = pow(2,k);
-    for(int i = 0; i < n; i++){
-        vector<int> virus(virusSize);
-        for(int j = 0; j < virusSize; j++){
-            cin >> tmp;
-            virus[j] = tmp;
-        }
-        if(checkVirus(virus,0,virusSize)) cout << "yes\n";
+    int len = pow(2,k);
+    vector<int> v(len);
+    for(int i = 0;i<n;i++){
+        for(int j = 0;j<len;j++) cin >> v[j];
+        if(solve(v,0,len-1)) cout << "yes\n";
         else cout << "no\n";
     }
-
 }
