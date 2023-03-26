@@ -8,20 +8,20 @@ int main(){
     int r,c,t;
     cin >> r >> c >> t;
     vector<vector<int>> v(r,vector<int>(c));
-    vector<pair<int,int>> start;
     for(int i = 0;i<r;i++){
         for(int j = 0;j<c;j++){
             cin >> v[i][j];
-            if(v[i][j] == 1) start.push_back({i,j});
         }
     }
     
     vector<pair<int,int>> direction = {{-1,0},{1,0},{0,1},{0,-1}};
-    
     queue<pair<int,int>> q;
 
+    // Loop t times
     for(int i = 0;i<t;i++){
+        // Put every 1 to queue
         for(int j = 0;j<r;j++) for(int k =0;k<c;k++) if(v[j][k] == 1) q.push({j,k});       
+        // Do 4 direction for every items in queue
         while(!q.empty()){
             pair<int,int> p = q.front(); q.pop();
             for(auto &d : direction){
