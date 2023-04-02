@@ -4,15 +4,6 @@
 
 using namespace std;
 
-void get_leaves(queue<int> &leaves,vector<int> &deg){
-    for(int i = 0;i<deg.size();i++){ 
-        if(deg[i] == 1) {
-            leaves.push(i);
-            deg[i]--;
-        }
-    }
-}
-
 int main(){
     int n;
     cin >> n;
@@ -23,29 +14,29 @@ int main(){
         cin >> a >> b;
         g[a].push_back(b);
         g[b].push_back(a);
+        deg[a]++;
+        deg[b]++;
     }
 
     queue<int> leaves;
-    for(int i = 0;i<n;i++) deg[i] = g[i].size();
-
-    get_leaves(leaves,deg);
-
+    for(int i = 0;i<n;i++){
+        if(deg[i] == 1){
+            leaves.push(i);
+            deg[i] = 0;
+        }
+    }
     while(!leaves.empty()){
-        int f = leaves.front();
+        int t = leaves.front();
         leaves.pop();
-        for(auto &u : g[f]){ 
+        for(auto &u : g[t]){
             deg[u]--;
             if(deg[u] == 1){
                 leaves.push(u);
-                deg[u]--;
+                deg[u] = 0;
             }
         }
-        // for(auto &x : deg) cout << x << " ";
-        // cout << endl;
     }
     int ans = 0;
-    // for(auto &d : deg) cout << d << " ";
-    // cout << endl;
-    for(auto &d : deg) if(d > 0) ans++;
+    for(auto &x : deg) if(x > 0) ans++;
     cout << ans;
 }
