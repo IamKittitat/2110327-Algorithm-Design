@@ -1,39 +1,38 @@
 #include<iostream>
 #include<vector>
-#include<queue>
 
 using namespace std;
+
+typedef pair<int,pair<int,int>> edge;
+
+int maxIdx(vector<int> &dist){
+    int idx = -1, maxVal = INT32_MIN;
+    for(int i = 0;i<dist.size();i++){
+        if(dist[i] > maxVal){
+            maxVal = dist[i];
+            idx = i;
+        }
+    }
+    return idx;
+}
 
 int main(){
     int n;
     cin >> n;
-    vector<int> v(n);
-    vector<vector<int>> w(n,vector<int>(n,0));
-    for(int i = 0;i<n;i++){
-        cin >> v[i];
-    }
-    for(int i = 0;i<n;i++){
-        for(int j = 0;j<n;j++) w[i][j] = v[i]^v[j];
-    }
-
-    vector<int> dist(n,-1);
+    vector<int> b(n);
+    for(int i = 0;i<n;i++) cin >> b[i];
+    vector<int> dist(n,INT32_MIN);
     vector<bool> inMST(n,false);
-    priority_queue<pair<int,int>,vector<pair<int,int>>> pq;
     dist[0] = 0;
-    pq.push({dist[0],0});
     unsigned long long ans = 0;
-    while(!pq.empty()){
-        pair<int,int> p = pq.top();
-        pq.pop();
-        int d = p.first, v = p.second;
-        if(!inMST[v]){
-            inMST[v] = true;
-            ans = ans + (unsigned long long) d;
-            for(int i = 0;i<n;i++){
-                if(w[v][i] > 0 && w[v][i] > dist[i] && !inMST[i]){
-                    dist[i] = w[v][i];
-                    pq.push({dist[i],i});
-                }
+    for(int i = 0;i<n;i++){
+        int u = maxIdx(dist);
+        ans += (unsigned long long) dist[u];
+        dist[u] = INT32_MIN;
+        inMST[u] = true;
+        for(int j = 0;j<n;j++){
+            if(!inMST[j] && dist[j] < (b[u]^b[j])){
+                dist[j] = b[u] ^ b[j];
             }
         }
     }
