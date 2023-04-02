@@ -1,32 +1,21 @@
 #include<iostream>
-#include<vector>
 #include<stack>
+#include<vector>
 
 using namespace std;
 
-void dfs(vector<vector<int>> &g,vector<int> &color,stack<int> &s,int v){
+stack<int> ss;
+
+void dfs(vector<vector<int>> &g, vector<int> &color,int v){
     color[v] = 1;
     for(auto &u : g[v]){
-        if(color[u] == 0) dfs(g,color,s,u);
+        if(color[u] == 0)dfs(g,color,u);
     }
     color[v] = 2;
-    s.push(v);
+    ss.push(v);
 }
 
-void solve(vector<vector<int>> &g,int n){
-    vector<int> color(n,0);
-    stack<int> s;
-    for(int i = 0;i<n;i++){
-        if(color[i] == 0) dfs(g,color,s,i);
-    }
-    vector<int> ans;
-    while(!s.empty()){
-        cout << s.top() << " ";
-        s.pop();
-    }
-}
-
- int main(){
+int main(){
     int n;
     cin >> n;
     vector<vector<int>> g(n);
@@ -34,11 +23,18 @@ void solve(vector<vector<int>> &g,int n){
         int m;
         cin >> m;
         for(int j = 0;j<m;j++){
-           int ip;
-           cin >> ip;
-           g[ip].push_back(i); 
+            int ip;
+            cin >> ip;
+            g[ip].push_back(i);
         }
     }
-    solve(g,n);
 
- }
+    vector<int> color(n,0);
+    for(int i= 0 ;i<n;i++){
+        if(color[i] == 0) dfs(g,color,i);
+    }
+    while(!ss.empty()){
+        cout << ss.top() << " ";
+        ss.pop();
+    }
+}
