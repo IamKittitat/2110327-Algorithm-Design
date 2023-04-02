@@ -5,45 +5,31 @@
 
 using namespace std;
 
-// KOSARAJU's ALGO to find SS of the graph
+stack<int> ss;
 
-// DFS and count the amount of vertex in the Component
-void dfs(stack<int> &s,vector<vector<int>> &g,vector<int> &color,int v,int &count){
+void dfs2(vector<vector<int>> &g,vector<int> &color,int &count,int v){
     color[v] = 1;
-    for(auto &u : g[v]){
-        if(color[u] == 0){
-            count++;
-            dfs(s,g,color,u,count);
-        }
+    count++;
+    for(auto &u : g[v]){    
+        if(color[u] == 0) dfs2(g,color,count,u);
     }
     color[v] = 2;
-    s.push(v);
 }
 
-vector<int> solve(vector<vector<int>> &g,vector<vector<int>> &gt,int n){
-    stack<int> s;
+void dfs1(vector<vector<int>> &g,vector<int> &color,int v){
+    color[v] = 1;
+    for(auto &u : g[v]){    
+        if(color[u] == 0) dfs1(g,color,u);
+    }
+    color[v] = 2;
+    ss.push(v);
+}
+
+void dfs_all(vector<vector<int>> &g,int n){
     vector<int> color(n,0);
-    int count = 0;
-    // DFS in GT to find source of the graph
-    for(int i =0 ;i<n;i++){
-        if(color[i] == 0) dfs(s,gt,color,i,count);
+    for(int i = 0;i<n;i++){
+        if(color[i] == 0) dfs1(g,color,i);
     }
-    vector<int> ans;
-    vector<int> color2(n,0);
-    
-    // DFS in G to find the connected component
-    while(!s.empty()){
-        // start count with 1 (Vertex t)
-        count = 1;
-        int t = s.top();
-        s.pop();
-        if(color2[t] == 0){
-            dfs(s,g,color2,t,count);
-            // cout << "! " << count << endl;
-            ans.push_back(count);
-        }
-    }
-    return ans;
 }
 
 int main(){
@@ -53,19 +39,26 @@ int main(){
     for(int i = 0;i<n;i++){
         int m;
         cin >> m;
-        for(int j =0;j<m;j++){
+        for(int j = 0;j<m;j++){
             int ip;
             cin >> ip;
             g[i].push_back(ip);
+            gt[ip].push_back(i);
         }
     }
-    // Make g transpose
-    for(int i = 0;i<n;i++){
-        for(auto &x : g[i]){
-            gt[x].push_back(i);
+    dfs_all(gt,n);
+    vector<int> ans;
+    vector<int> color(n,0);
+    while(!ss.empty()){
+        int t = ss.top();
+        ss.pop();
+        int count = 0;
+        if(color[t] == 0){
+            dfs2(g,color,count,t);
+            ans.push_back(count);
         }
     }
-    vector<int> ans = solve(g,gt,n);
     sort(ans.begin(),ans.end());
     for(auto &x : ans) cout << x << " ";
+
 }
