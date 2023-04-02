@@ -1,32 +1,36 @@
 #include<iostream>
 #include<vector>
+#include<queue>
 
 using namespace std;
 
 int main(){
-    int n,e,s;
-    cin >> n >> e >> s;
-    vector<pair<int,pair<int,int>>> E(e);
-    for(int i = 0;i<e;i++){
-        int a,b,c;
-        cin >> a >> b >> c;
-        E[i] = {c,{a,b}};
+    int r,c;
+    cin >> r >> c;
+    vector<vector<char>> g(r+1,vector<char>(c+1,0));
+    for(int i = 1;i<=r;i++){
+        string ip;
+        cin >> ip;
+        ip = " " + ip;
+        for(int j = 1;j<=c;j++) g[i][j] = ip[j];
     }
-    vector<int> dist(n,1000000);
-    dist[s] = 0;
-    for(int k = 1;k<n;k++){
-        for(auto &edge : E){
-            int w = edge.first, from = edge.second.first, to = edge.second.second;
-            dist[to] = min(dist[to],dist[from] + w);
+
+    vector<pair<int,int>> direction = {{0,1},{0,-1},{1,0},{-1,0}};
+    vector<vector<int>> dist(r+1,vector<int>(c+1,101*101));
+    queue<pair<int,int>> q;
+    q.push({1,1});
+    dist[1][1] = 0;
+    while(!q.empty()){
+        pair<int,int> t = q.front();
+        q.pop();
+        for(auto &d : direction){
+            int i = t.first + d.first, j = t.second + d.second;
+            if(i >= 1 && i <= r && j >= 1 && j <= c && g[i][j] == '.' && dist[i][j] == 101*101){
+                dist[i][j] = dist[t.first][t.second] + 1;
+                q.push({i,j});
+            }
         }
     }
-
-    bool negCycle = false;
-    for(auto &edge : E){
-        int w = edge.first, from = edge.second.first, to = edge.second.second;
-        if(dist[from] + w < dist[to]) negCycle = true;
-    }
-    if(negCycle) cout << -1;
-    else for(auto &x : dist) cout << x << " ";
-
+    if(dist[r][c] != 101*101) cout << dist[r][c];
+    else cout << -1;
 }
