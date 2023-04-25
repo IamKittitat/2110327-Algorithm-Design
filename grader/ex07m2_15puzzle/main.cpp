@@ -15,16 +15,13 @@ struct board{
     vector<vector<int>> table;
 
     int cost()const{
-            int ans = 0;
-
+        int ans = 0;
         for(int i=0;i<4;i++)
-            for(int j=0;j<4;j++)
-            {
+            for(int j=0;j<4;j++){
                 if(this->table[i][j] == 0) continue;
                 int x = this->table[i][j];
                 ans += abs(i-(x-1)/4) + abs(j-(x-1)%4);
             }
-
         return ans;
     }
 
