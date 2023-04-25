@@ -1,150 +1,86 @@
 #include<iostream>
+#include<vector>
 #include<queue>
-#include<map>
+#include<set>
 
 using namespace std;
 
-vector<vector<int>> correctBoard = {{1,2,3,4},{5,6,7,8},{9,10,11,12},{13,14,15,0}};
+vector<pair<int,int>> correct = {{3,3},{0,0},{0,1},{0,2},
+                                 {0,3},{1,0},{1,1},{1,2},
+                                 {1,3},{2,0},{2,1},{2,2},
+                                 {2,3},{3,0},{3,1},{3,2}};
 
-typedef pair<int,vector<vector<int>>> bcsPair;
+struct board{
+    int used;
+    vector<vector<int>> table;
 
-int cost(vector<vector<int>> &board){
-    // int ans = 0;
-    // for(int i = 0;i<4;i++){
-    //     for(int j = 0;j<4;j++){
-    //         if(board[i][j] == 0) continue;
-    //         if(board[i][j] != correctBoard[i][j]) ans++;
-    //     }
-    // }
-    // return ans;
+    int cost()const{
+            int ans = 0;
 
-    int ans = 0;
+        for(int i=0;i<4;i++)
+            for(int j=0;j<4;j++)
+            {
+                if(this->table[i][j] == 0) continue;
+                int x = this->table[i][j];
+                ans += abs(i-(x-1)/4) + abs(j-(x-1)%4);
+            }
 
-    for(int i=0;i<4;i++)
-        for(int j=0;j<4;j++)
-        {
-            if(board[i][j] == 0) continue;
-            int x = board[i][j];
-            ans += abs(i-(x-1)/4) + abs(j-(x-1)%4);
-        }
-
-    return ans;
-}
-
-bool check(vector<vector<int>> &v){
-    for(int i = 0;i<4;i++){
-        for(int j = 0;j<4;j++){
-            if(v[i][j] != correctBoard[i][j]) return false;
-        }
+        return ans;
     }
-    return true;
-}
 
-pair<int,int> findSpace(vector<vector<int>> &v){
-    for(int i = 0;i<4;i++){
-        for(int j = 0;j<4;j++){
-            if(v[i][j] == 0) return {i,j};
-        }
-    }
-    return {5,5};
-}
-
-int main(){
-    vector<vector<int>> ip(4,vector<int>(4));
-    for(int i = 0;i<4;i++){
-        for(int j = 0;j<4;j++) cin >> ip[i][j];
-    }
-    priority_queue<bcsPair,vector<bcsPair>,greater<bcsPair>> pq;
-    pq.push({cost(ip),ip});
-    map<vector<vector<int>>,int> m;
-    m[ip] = 0;
-    while(!pq.empty()){
-        bcsPair t = pq.top();
-        vector<vector<int>> board = t.second;
-        int move = m[board];
-        pq.pop();
-        if(check(board)){
-            cout << m[board];
-            break;
-        }
-
-        vector<pair<int,int>> direction = {{-1,0},{1,0},{0,-1},{0,1}};
-        pair<int,int> space = findSpace(board);
-        for(auto &d : direction){
-            int r = space.first + d.first, c = space.second + d.second;
-            if(r>=0 && r<4 && c >= 0 && c < 4){
-                vector<vector<int>> tmp = board;
-                swap(tmp[r][c],tmp[space.first][space.second]);
-                if(m.count(tmp) == 0){
-                    m[tmp] = move + 1;
-                    pq.push({move+1+cost(tmp),tmp});
-                }
+    pair<int,int> findSpace(){
+        for(int i = 0;i<4;i++){
+            for(int j = 0;j<4;j++){
+                if(this->table[i][j] == 0) return {i,j};
             }
         }
+        return {4,4};
     }
-}
 
-
-
-
-
-// Normal BFS (30/100) PPPTTTTTTT
-/*
-typedef pair<vector<vector<int>>,int> state;
-
-vector<vector<int>> correctBoard = {{1,2,3,4},{5,6,7,8},{9,10,11,12},{13,14,15,0}};
-
-pair<int,int> findSpace(vector<vector<int>> &v){
-    for(int i = 0;i<4;i++){
-        for(int j = 0;j<4;j++){
-            if(v[i][j] == 0) return {i,j};
-        }
+    bool finish(){
+        return cost() == 0;
     }
-    return {5,5};
-}
 
-bool check(vector<vector<int>> &v){
-    for(int i = 0;i<4;i++){
-        for(int j = 0;j<4;j++){
-            if(v[i][j] != correctBoard[i][j]) return false;
-        }
+    bool operator<(const board &state)const{
+        int lcost = cost();
+        int rcost = state.cost();
+        return lcost + this->used > rcost + state.used;
     }
-    return true;
-}
+};
 
 int main(){
-    vector<vector<int>> ip(4,vector<int>(4));
-    for(int i = 0;i<4;i++){
-        for(int j = 0;j<4;j++) cin >> ip[i][j];
-    }
-
+    vector<vector<int>> start(4,vector<int>(4));
+    board state;
+    for(int i= 0 ;i<4;i++) for(int j = 0;j<4;j++) cin >> start[i][j];
+    state.table = start;
+    state.used = 0;
+    priority_queue<board> pq;
     set<vector<vector<int>>> s;
-    s.insert(ip);
-    queue<state> q;
-    q.push({ip,0});
-
     vector<pair<int,int>> direction = {{-1,0},{1,0},{0,-1},{0,1}};
-    while(!q.empty()){
-        state t = q.front();
-        q.pop();
-        vector<vector<int>> board = t.first;
-        int move = t.second;
-        if(check(board)){
-            cout << move;
+
+    s.insert(start);
+    pq.push(state);
+
+    while(!pq.empty()){
+        board state = pq.top();
+        pq.pop();
+        if(state.finish()){
+            cout << state.used;
             break;
         }
-        pair<int,int> space = findSpace(board);
+        pair<int,int> space = state.findSpace();
         for(auto &d : direction){
             int r = space.first + d.first, c = space.second + d.second;
-            if(r>=0 && r<4 && c >= 0 && c < 4){
-                vector<vector<int>> tmp = board;
-                swap(tmp[r][c],tmp[space.first][space.second]);
-                if(s.count(tmp) == 0){
-                    s.insert(tmp);
-                    q.push({tmp,move+1});
+            if(r < 4 && r >= 0 && c < 4 && c >= 0){
+                board newState;
+                newState.table = state.table;
+                swap(newState.table[space.first][space.second],newState.table[r][c]);
+                if(s.count(newState.table) == 0){
+                    s.insert(newState.table);
+                    newState.used = state.used + 1;
+                    pq.push(newState);
                 }
-            }
+            }   
         }
     }
 }
-*/
