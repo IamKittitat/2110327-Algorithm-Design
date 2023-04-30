@@ -1,7 +1,6 @@
 #include<iostream>
 #include<iomanip>
 #include<vector>
-#include<queue>
 #include<algorithm>
 
 using namespace std;
@@ -10,18 +9,18 @@ int main(){
     int n,m;
     cin >> n >> m;
     vector<int> v(m);
+    vector<int> doTask(n);
     for(int i = 0;i<m;i++) cin >> v[i];
     sort(v.begin(),v.end());
-    priority_queue<int,vector<int>,greater<int>> pq;
-    double ans = 0;
-    for(int i = 0;i<n;i++) pq.push(0);
+
+    double total = 0;
+    
+    int idx = 0;
     for(int i = 0;i<m;i++){
-        int t = pq.top();
-        pq.pop();
-        t += v[i];
-        pq.push(t);
-        ans += t;
+        doTask[idx] += v[i];
+        total += doTask[idx];
+        idx = (idx+1)%n;
     }
-    cout << setprecision(7) <<  ans/m;
+    cout << setprecision(10) << total/m;
 
 }
