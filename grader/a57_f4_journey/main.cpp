@@ -6,7 +6,7 @@
 using namespace std;
 
 int n;
-vector<vector<int>> g;
+vector<vector<int>> v;
 
 struct state{
     vector<int> sol;
@@ -14,80 +14,89 @@ struct state{
     int len;
     int ub;
 
-    // MAX IN
-    int calUB(){
+    int calUb(){
+        // set to store city that already out
         set<int> passed;
         int ans = 0;
+        // Passed happiness
         for(int i = 0;i<len-1;i++){
-            ans += g[sol[i]][sol[i+1]];
+            ans += v[sol[i]][sol[i+1]];
             passed.insert(sol[i]);
         }
-
-        for(int i = 0;i<n;i++){
-            int tmpMax = -20000;
-            if(passed.count(i) == 0 && i != sol[len-1]){
-                for(int j = 0; j < n;j++){
-                    if(i!=j && passed.count(j) == 0){
-                        tmpMax = max(tmpMax,g[j][i]);
-                    }
-                }
-                ans += tmpMax;
+        // Upper Bound for happiness
+        for(int j = 0;j<n;j++){
+            int tmpMax = -11111;
+            // Not yet out the city
+            if(passed.count(j) == 0 && j != sol[len-1]){
+                for(int i = 0;i<n;i++){
+                    // CANT BE i == j (self loop)
+                    if(passed.count(i) == 0 && i != j) tmpMax = max(tmpMax,v[i][j]);
+                }  
+                ans += tmpMax;     
             }
         }
         return ans;
     }
 
     bool operator<(const state &rhs)const{
-        return ub < rhs.ub;
+        return this->ub < rhs.ub;
     }
 };
 
 int main(){
-    ios_base::sync_with_stdio(false); cin.tie(0);
     cin >> n;
-    g.resize(n,vector<int>(n));
-    for(int i = 0;i<n;i++) for(int j = 0;j<n;j++) cin >> g[i][j];
-    state init;
-    vector<int> initSol(n,0);
+    state start;
+    v.resize(n,vector<int>(n));
+    for(int i = 0;i<n;i++) for(int j = 0;j<n;j++) cin >> v[i][j];
+    
+    // Initialize parameter
+    vector<int> init(n,0);
     vector<bool> initUsed(n,false);
-    initSol[0] = 0; initUsed[0] = true;
-    initSol[n-1] = n-1; initUsed[n-1] = true;
-    init.sol = initSol;
-    init.used = initUsed;
-    init.len = 1;
-    init.ub = init.calUB();
+    init[0] = 0; initUsed[0] = true;
+    init[init.size()-1] = n-1; initUsed[n-1] = true;
+    start.sol = init;
+    start.len = 1;
+    start.used = initUsed;
+    start.ub = start.calUb();
 
-    int maxUB = -10005*21;
-    vector<int> bestSol;
+    // Priority Queue that Max UB comes first
     priority_queue<state> pq;
-    pq.push(init);
+    pq.push(start);
+
+    // Parameter for max happiness solution
+    int ubMax = -10005*25;
+    vector<int> bestSol;
+
     while(!pq.empty()){
         state t = pq.top();
         pq.pop();
-        if(t.ub < maxUB) break;
+        // Bound
+        if(t.ub < ubMax) break;
+        // n-1 + (last city) = n ==> travel complete
         if(t.len == n-1){
-            if(t.ub > maxUB){
-                maxUB = t.ub;
+            if(t.ub > ubMax){
+                ubMax = t.ub;
                 bestSol = t.sol;
             }
         } else{
+            // Permutation
             for(int i = 1;i<n-1;i++){
                 if(!t.used[i]){
-                    t.used[i] = true;
                     t.sol[t.len] = i;
+                    t.used[i] = true;
                     t.len++;
-                    t.ub = t.calUB();
+                    t.ub = t.calUb();
                     pq.push(t);
                     
-                    t.len--;
+                    // Set back for next loop
                     t.used[i] = false;
+                    t.len--;
                 }
             }
         }
     }
-    // for(auto &x : bestSol) cout << x << " ";
-    int happiness = 0;
-    for(int i = 0;i<n-1;i++) happiness += g[bestSol[i]][bestSol[i+1]];
-    cout << happiness;
 
+    int maxHappines = 0;
+    for(int i = 0;i<n-1;i++) maxHappines += v[bestSol[i]][bestSol[i+1]];
+    cout << maxHappines;
 }
