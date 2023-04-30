@@ -10,74 +10,75 @@ vector<pair<int,int>> correct = {{3,3},{0,0},{0,1},{0,2},
                                  {1,3},{2,0},{2,1},{2,2},
                                  {2,3},{3,0},{3,1},{3,2}};
 
-struct board{
-    int used;
-    vector<vector<int>> table;
+struct state{
+    vector<vector<int>> sol;
+    int lb;
+    int moved;
 
-    int cost()const{
+    int calCost(){
         int ans = 0;
-        for(int i=0;i<4;i++)
-            for(int j=0;j<4;j++){
-                if(this->table[i][j] == 0) continue;
-                int x = this->table[i][j];
-                ans += abs(i-(x-1)/4) + abs(j-(x-1)%4);
+        for(int i = 0;i<4;i++){
+            for(int j = 0;j<4;j++){
+                if(sol[i][j] == 0) continue;
+                ans += abs(correct[sol[i][j]].first - i) + abs(correct[sol[i][j]].second - j);
             }
-        return ans;
+        }
+        return moved + ans;
+    }
+
+    bool finish(){
+        return calCost() - moved == 0;
     }
 
     pair<int,int> findSpace(){
         for(int i = 0;i<4;i++){
             for(int j = 0;j<4;j++){
-                if(this->table[i][j] == 0) return {i,j};
+                if(sol[i][j] == 0) return {i,j};
             }
         }
-        return {4,4};
+        return {10,10};
     }
 
-    bool finish(){
-        return cost() == 0;
-    }
-
-    bool operator<(const board &state)const{
-        int lcost = cost();
-        int rcost = state.cost();
-        return lcost + this->used > rcost + state.used;
+    bool operator<(const state &rhs)const{
+        return lb > rhs.lb;
     }
 };
 
 int main(){
-    vector<vector<int>> start(4,vector<int>(4));
-    board state;
-    for(int i= 0 ;i<4;i++) for(int j = 0;j<4;j++) cin >> start[i][j];
-    state.table = start;
-    state.used = 0;
-    priority_queue<board> pq;
-    set<vector<vector<int>>> s;
-    vector<pair<int,int>> direction = {{-1,0},{1,0},{0,-1},{0,1}};
+    vector<vector<int>> initSol(4,vector<int>(4));
+    for(int i = 0;i<4;i++) for(int j = 0;j<4;j++) cin >> initSol[i][j];
+    state init;
+    init.sol = initSol;
+    init.moved = 0;
+    init.lb = init.calCost();
 
-    s.insert(start);
-    pq.push(state);
+    vector<pair<int,int>> direction = {{0,1},{0,-1},{1,0},{-1,0}};
+    priority_queue<state> pq;
+    set<vector<vector<int>>> s;
+    pq.push(init);
+    s.insert(initSol);
 
     while(!pq.empty()){
-        board state = pq.top();
+        state t = pq.top();
         pq.pop();
-        if(state.finish()){
-            cout << state.used;
-            break;
-        }
-        pair<int,int> space = state.findSpace();
-        for(auto &d : direction){
-            int r = space.first + d.first, c = space.second + d.second;
-            if(r < 4 && r >= 0 && c < 4 && c >= 0){
-                board newState;
-                newState.table = state.table;
-                swap(newState.table[space.first][space.second],newState.table[r][c]);
-                if(s.count(newState.table) == 0){
-                    s.insert(newState.table);
-                    newState.used = state.used + 1;
-                    pq.push(newState);
+        if(t.finish()){
+            cout << t.moved;
+            break; 
+        } else{
+            pair<int,int> space = t.findSpace();
+            for(auto &d : direction){
+                int r = space.first + d.first, c = space.second + d.second;
+                if(r >= 0 && r < 4 && c >= 0 && c < 4){
+                    state newT = t;
+                    swap(newT.sol[space.first][space.second],newT.sol[r][c]);
+                    if(s.count(newT.sol) == 0){
+                        newT.moved++;
+                        newT.lb = newT.calCost();
+                        pq.push(newT);
+                        s.insert(newT.sol);
+                    }
                 }
-            }   
+            }
         }
     }
 }
