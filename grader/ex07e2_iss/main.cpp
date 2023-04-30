@@ -3,22 +3,19 @@
 
 using namespace std;
 
-int ans = 0;
+int n, ans = 0;
 
-void solve(int last,int total,int n){    
-    if(total == n){
+void solve(int last,int need){
+    if(need == 0){
         ans++;
         return;
     }
-    
-    for(int i = last;i<=n-total;i++){
-        solve(i,total+i,n);
-    }
+
+    for(int i = last;i<=need;i++) solve(i,need-i);
 }
 
 int main(){
-    int n;
     cin >> n;
-    solve(1,0,n);
+    solve(1,n);
     cout << ans;
 }
