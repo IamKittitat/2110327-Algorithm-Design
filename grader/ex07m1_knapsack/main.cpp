@@ -1,78 +1,90 @@
 #include<iostream>
-#include <iomanip>
+#include<iomanip>
 #include<vector>
 #include<queue>
 
 using namespace std;
 
-typedef pair<float,pair<vector<float>,int>> bbpair;
-
 int n;
-float maxW;
-vector<float> v,w;
+double maxW;
+vector<double> v,w;
 
-// Compute upper bound from items idx to n (maxV not exceeding maxW)
-float ub(int idx,float maxW){
-    float ans = 0;
-    // cout << "!" << idx ;
-    priority_queue<pair<float,int>> pq;
-    for(int i = idx;i < n;i++) pq.push({v[i]/w[i],i});
-    while(maxW > 0 && !pq.empty()){
-        pair<float,int> t = pq.top();
-        pq.pop();
-        int i = t.second;
-        if(w[i] > maxW){
-            ans += (maxW*v[i])/w[i];
-            maxW = 0;
-        } else{
-            ans += v[i];
-            maxW -= w[i];
+struct state{
+    vector<int> sol;
+    int len;
+    double sumV;
+    double sumW;
+    double ub;
+
+    double calUB(double maxW){
+        double ub = 0;
+        for(int i = 0;i<len;i++) ub += v[i]*sol[i];
+        priority_queue<pair<double,int>> pq;
+        for(int i = len;i<n;i++) pq.push({v[i]/w[i],i});
+        while(!pq.empty() && maxW > 0){
+            pair<double,int> t = pq.top();
+            pq.pop();
+            int idx = t.second;
+            if(w[idx] > maxW){
+                ub += (maxW/w[idx])*v[idx];
+                maxW = 0;
+            } else{
+                ub += v[idx];
+                maxW -= w[idx];
+            }
         }
+        return ub;
     }
-    // cout << "out" << endl;
-    return ans;
-}
-
-float calSum(vector<float> &v,vector<float> &sol){
-    float ans = 0;
-    for(int i = 0;i<n;i++) ans += v[i]*sol[i];
-    return ans;
-}
+    
+    bool operator<(const state &rhs)const{
+        return ub < rhs.ub;
+    }
+};
 
 int main(){
     cin >> maxW >> n;
     v.resize(n);
     w.resize(n);
-
     for(int i = 0;i<n;i++) cin >> v[i];
     for(int i = 0;i<n;i++) cin >> w[i];
-    priority_queue<bbpair> pq;
-    vector<float> ans;
-    float maxV = 0;
-    pq.push({ub(0,maxW),{vector<float>(n,0),0}});
+    state init;
+    vector<int> initSol(n);
+    init.sol = initSol;
+    init.len = 0;
+    init.sumV = 0;
+    init.sumW = 0;
+    init.ub = init.calUB(maxW);
 
+    priority_queue<state> pq;
+    pq.push(init);
+    int maxUB = -1;
+    vector<int> bestSol;
     while(!pq.empty()){
-        bbpair t = pq.top();
+        state t = pq.top();
         pq.pop();
-        if(t.first < maxV) break;
-        vector<float> tmpAns = t.second.first;
-        int len = t.second.second;
-        if(len == n){
-            if(t.first > maxV){
-                maxV = t.first;
-                ans = tmpAns;
+        if(t.ub < maxUB) break;
+        if(t.len == n){
+            if(t.ub > maxUB){
+                maxUB = t.ub;
+                bestSol = t.sol;
             }
         } else{
-            float sumV = calSum(v,tmpAns),sumW = calSum(w,tmpAns);
-            tmpAns[len] = 0;
-            pq.push({sumV + ub(len+1,maxW-sumW),{tmpAns,len+1}});
-            if(sumW + w[len] <= maxW){
-                tmpAns[len] = 1;
-                pq.push({sumV + ub(len+1,maxW-sumW-w[len])+v[len],{tmpAns,len+1}});
+            state sol0 = t, sol1 = t;
+            sol0.sol[sol0.len] = 0;
+            sol0.len++;
+            sol0.ub = sol0.calUB(maxW-sol0.sumW);
+            pq.push(sol0);
+            if(sol1.sumW + w[sol1.len] < maxW){
+                sol1.sol[sol1.len] = 1;
+                sol1.sumV += v[sol1.len];
+                sol1.sumW += w[sol1.len];
+                sol1.len++;
+                sol1.ub = sol1.calUB(maxW-sol1.sumW);
+                pq.push(sol1);
             }
-        }
+        }    
     }
-    double maxVAns = 0;
-    for(int i = 0; i<n;i++) maxVAns += v[i]*ans[i];
-    cout << std::setprecision(10) << maxVAns;
+    double maxV = 0;
+    for(int i = 0;i<n;i++) maxV += bestSol[i]*v[i];
+    cout << setprecision(8) <<maxV;
 }
