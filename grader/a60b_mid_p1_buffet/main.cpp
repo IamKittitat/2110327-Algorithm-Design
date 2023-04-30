@@ -5,19 +5,20 @@
 using namespace std;
 
 int main(){
-    int f,w,n;
+    int f,n,w;
     cin >> f >> w >> n;
-    vector<int> foods(f);
-    for(int i = 0;i<f;i++) cin >> foods[i];
-    int l = 2*w+1;
-    sort(foods.begin(),foods.end());
-    int idx = foods[0];
+    vector<int> v(f);
+    for(int i = 0;i<f;i++) cin >> v[i];
+    sort(v.begin(),v.end());
+    int idx = v[0];
     int ans = 1;
-    while(idx < foods[foods.size()-1]){
-        idx += l;
-        auto it = lower_bound(foods.begin(),foods.end(),idx);
-        if(*it < idx) break;
-        idx = *it;
+    int len = 2*w + 1;
+
+    while(idx <= v.back()){
+        idx += len;
+        auto it = lower_bound(v.begin(),v.end(),idx);
+        if(*it >= idx) idx = *it;
+        else break;
         ans++;
     }
     cout << ans;
